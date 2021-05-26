@@ -12,7 +12,7 @@ libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.6.14"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-core" % "10.2.4"
 libraryDependencies += "com.typesafe.akka" %% "akka-cluster-typed" % "2.6.14"
 libraryDependencies += "com.typesafe.play" %% "play" % "2.8.8"
-
+libraryDependencies += "com.typesafe.akka" %% "akka-serialization-jackson" % "2.6.14"
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.arczipt.controllers._"
 

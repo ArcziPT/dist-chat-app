@@ -1,6 +1,6 @@
 services:
   chatMainNode:
-    image: arczipt/test-chat
+    image: arczipt/chat-app
     ports:
       - '2551:2551'
       - '8000:9000'
@@ -12,7 +12,7 @@ services:
       PLAY_SECRET: 'QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
   
   chatNode1:
-    image: arczipt/test-chat
+    image: arczipt/chat-app
     ports:
       - '8001:9000'
     environment:
