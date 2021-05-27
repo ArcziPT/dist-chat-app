@@ -1,6 +1,6 @@
 services:
   chatMainNode:
-    image: arczipt/chat-app
+    image: arczipt/chat-service
     ports:
       - '2551:2551'
       - '8000:9000'
@@ -12,7 +12,7 @@ services:
       PLAY_SECRET: 'QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
   
   chatNode1:
-    image: arczipt/chat-app
+    image: arczipt/chat-service
     ports:
       - '8001:9000'
     environment:
@@ -21,3 +21,11 @@ services:
       SEED_HOSTNAME: 'chatMainNode'
       SEED_PORT: 2551
       PLAY_SECRET: 'QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
+
+  dbNode:
+    image: arczipt/db-service
+    environment:
+      AKKA_HOSTNAME: 'chatNode1'
+      AKKA_PORT: 2551
+      SEED_HOSTNAME: 'chatMainNode'
+      SEED_PORT: 2551

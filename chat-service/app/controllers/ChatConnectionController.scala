@@ -28,7 +28,7 @@ class ChatConnectionController @Inject() (cc: ControllerComponents)(implicit sys
   //TODO: only for test
   def members() = Action {request =>
     Ok(cluster.state.members
-      .filter(member => member.status ==  MemberStatus.up).unsorted
+      .filter(member => member.status ==  MemberStatus.up)
       .map(member => member.address.toString)
       .toString())
   }
