@@ -2,7 +2,6 @@ services:
   chatMainNode:
     image: arczipt/chat-service
     ports:
-      - '2551:2551'
       - '8000:9000'
     environment:
       AKKA_HOSTNAME: 'chatMainNode'
@@ -25,7 +24,7 @@ services:
   dbNode:
     image: arczipt/db-service
     environment:
-      AKKA_HOSTNAME: 'chatNode1'
+      AKKA_HOSTNAME: 'dbNode'
       AKKA_PORT: 2551
       SEED_HOSTNAME: 'chatMainNode'
       SEED_PORT: 2551

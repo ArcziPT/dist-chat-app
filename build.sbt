@@ -14,7 +14,10 @@ lazy val dbService = (project in file("db-service/"))
     .enablePlugins(JavaAppPackaging)
     .settings(
         name := "db-service",
-        libraryDependencies ++= commonDependencies
+        libraryDependencies ++= commonDependencies,
+        mappings in Universal += {
+            ((resourceDirectory in Compile).value / "application.conf") -> "conf/application.conf"
+        }
     )
 
 scalaVersion := "2.13.6"

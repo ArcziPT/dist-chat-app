@@ -1,4 +1,4 @@
-package system
+package com.arczipt.dbService
 
 trait SerializableMessage
 
