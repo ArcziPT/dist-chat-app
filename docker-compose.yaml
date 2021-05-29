@@ -9,6 +9,8 @@ services:
       SEED_HOSTNAME: 'chatMainNode'
       SEED_PORT: 2551
       PLAY_SECRET: 'QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
+    depends_on:
+      - dbNode 
   
   chatNode1:
     image: arczipt/chat-service
@@ -20,11 +22,20 @@ services:
       SEED_HOSTNAME: 'chatMainNode'
       SEED_PORT: 2551
       PLAY_SECRET: 'QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
+    depends_on: 
+      - dbNode
+      - chatMainNode
 
   dbNode:
-    image: arczipt/db-service
+    image: mysql
+    volumes:
+      - chat-app-mysql:/var/lib/mysql
     environment:
-      AKKA_HOSTNAME: 'dbNode'
-      AKKA_PORT: 2551
-      SEED_HOSTNAME: 'chatMainNode'
-      SEED_PORT: 2551
+      MYSQL_ROOT_PASSWORD: 'root_pass'
+      MYSQL_USER: 'test_user'
+      MYSQL_PASSWORD: 'test_pass'
+      MYSQL_DATABASE: 'test_db'
+
+volumes:
+  chat-app-mysql:
+    driver: local

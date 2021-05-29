@@ -10,16 +10,6 @@ lazy val chatService = (project in file("chat-service/"))
         libraryDependencies ++= commonDependencies ++ chatDependencies
     )
 
-lazy val dbService = (project in file("db-service/"))
-    .enablePlugins(JavaAppPackaging)
-    .settings(
-        name := "db-service",
-        libraryDependencies ++= commonDependencies,
-        mappings in Universal += {
-            ((resourceDirectory in Compile).value / "application.conf") -> "conf/application.conf"
-        }
-    )
-
 scalaVersion := "2.13.6"
 
 lazy val commonDependencies = Seq(
@@ -32,6 +22,8 @@ lazy val commonDependencies = Seq(
 lazy val chatDependencies = Seq(
     guice,
     "com.typesafe.play" %% "play" % "2.8.8",
+    "com.typesafe.play" %% "play-slick" % "4.0.0",
+    "mysql" % "mysql-connector-java" % "8.0.16"
 )
 
 // Adds additional packages into Twirl

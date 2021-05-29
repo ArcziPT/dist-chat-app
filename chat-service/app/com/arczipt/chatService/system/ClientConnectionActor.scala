@@ -1,4 +1,4 @@
-package system
+package com.arczipt.dbService.system
 
 import akka.actor._
 import com.google.inject.Inject
@@ -8,7 +8,7 @@ import akka.cluster.pubsub.DistributedPubSubMediator._
 object ClientConnectionActor {
   def props(client: ActorRef)(implicit system: ActorSystem) = Props(new ClientConnectionActor(client))
 
-  case class Message(from: String, text: String) extends SerializableMessage
+  case class Message(from: String, text: String) extends Serializable
 }
 
 class ClientConnectionActor(val client: ActorRef)(implicit system: ActorSystem) extends Actor with ActorLogging {

@@ -1,4 +1,4 @@
-package controllers
+package com.arczipt.chatService.controllers
 
 import play.api.mvc._
 import play.api.libs.streams.ActorFlow
@@ -6,7 +6,7 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.cluster.Cluster
-import system.ClientConnectionActor
+import com.arczipt.dbService.system.ClientConnectionActor
 import akka.cluster.MemberStatus
 import akka.cluster.pubsub.DistributedPubSub
 import akka.actor.typed.eventstream.EventStream._
