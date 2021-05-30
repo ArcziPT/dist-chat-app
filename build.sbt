@@ -16,7 +16,8 @@ lazy val commonDependencies = Seq(
     "com.typesafe.akka" %% "akka-actor" % "2.6.14",
     "com.typesafe.akka" %% "akka-http-core" % "10.2.4",
     "com.typesafe.akka" %% "akka-cluster-typed" % "2.6.14",
-    "com.typesafe.akka" %% "akka-serialization-jackson" % "2.6.14"
+    "com.typesafe.akka" %% "akka-serialization-jackson" % "2.6.14",
+    "com.github.jwt-scala" %% "jwt-play-json" % "8.0.1"
 )
 
 lazy val chatDependencies = Seq(

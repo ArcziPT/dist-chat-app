@@ -5,23 +5,44 @@ import play.api.db.slick.DatabaseConfigProvider
 import scala.concurrent.ExecutionContext
 import play.api.db.slick.HasDatabaseConfigProvider
 import scala.concurrent.Future
-import com.arczipt.chatService.models.User
 import slick.jdbc.MySQLProfile
-import com.arczipt.chatService.models.UsersTable
+import com.arczipt.chatService.models.User._
+import com.arczipt.chatService.models.ServerMember._
 
 class UserDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends HasDatabaseConfigProvider[MySQLProfile] {
     import slick.jdbc.MySQLProfile.api._
 
-    private val Users = TableQuery[UsersTable]
+    def all(): Future[Seq[User]] = db.run(users.result)
 
-    def all(): Future[Seq[User]] = db.run(Users.result)
+    def insert(user: User): Future[Long] = 
+        db.run(users returning users.map(_.id) += user)
 
-    def insert(username: String, password: String): Future[Unit] = 
-        db.run(Users returning Users.map(_.id) += User(None, username, password)).map { _ => () }
+    def getByUsername(username: String) = {
+        val q = for{ 
+            user <- users if user.username === username
+        } yield(user)
+        db.run(q.result.headOption)
+    }
+
+    def getById(id: Long) = {
+        val q = for{ user <- users if user.id === id } yield(user)
+        db.run(q.result.headOption)
+    }
+
+    def getServers(userId: Long): Future[Seq[ServerMember]] = {
+        val q = serverMembers filter(_.userId === userId)
+        db.run(q.result)
+    }
 
     def create = {
         val users = TableQuery[UsersTable]
         val result = db.run(users.schema.create)
-        result.map(r => println("Stworzony"))
+        result.map(r => println("Users Table Created"))
+    }
+
+    def drop = {
+        val users = TableQuery[UsersTable]
+        val result = db.run(users.schema.drop)
+        result.map(r => println("Users Table Dropped"))
     }
 }

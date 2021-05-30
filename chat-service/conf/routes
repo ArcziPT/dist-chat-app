@@ -4,8 +4,10 @@
 # ~~~~
 
 GET     /connect                    com.arczipt.chatService.controllers.ChatConnectionController.socket()
-GET     /members                    com.arczipt.chatService.controllers.ChatConnectionController.members()
 
-GET     /add                        com.arczipt.chatService.controllers.UserController.addTest()
-GET     /get                        com.arczipt.chatService.controllers.UserController.getTest()
-GET     /create                     com.arczipt.chatService.controllers.UserController.create()
+POST    /auth                       com.arczipt.chatService.controllers.TestController.auth()
+POST    /addUser                    com.arczipt.chatService.controllers.TestController.addUser()
+GET     /getUsers                   com.arczipt.chatService.controllers.TestController.getUsers()
+GET     /getServers                 com.arczipt.chatService.controllers.TestController.getServers()
+GET     /create                     com.arczipt.chatService.controllers.TestController.create()
+GET     /addChannel                 com.arczipt.chatService.controllers.TestController.addChannel()
