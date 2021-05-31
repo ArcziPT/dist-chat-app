@@ -1,5 +1,6 @@
 package com.arczipt.chatService.models
 import slick.jdbc.MySQLProfile.api._
+import play.api.libs.json.Json
 
 object User{
     case class User(id: Option[Long], 
@@ -14,4 +15,7 @@ object User{
         def * = (id.?, username, password) <> (User.tupled, User.unapply)
     }
     val users = TableQuery[UsersTable]
+
+    case class UserDTO(id: Long, username: String)
+    implicit val userDTOWrite = Json.writes[UserDTO]
 }

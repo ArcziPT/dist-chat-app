@@ -5,9 +5,14 @@
 
 GET     /connect                    com.arczipt.chatService.controllers.ChatConnectionController.socket()
 
-POST    /auth                       com.arczipt.chatService.controllers.TestController.auth()
-POST    /addUser                    com.arczipt.chatService.controllers.TestController.addUser()
-GET     /getUsers                   com.arczipt.chatService.controllers.TestController.getUsers()
-GET     /getServers                 com.arczipt.chatService.controllers.TestController.getServers()
-GET     /create                     com.arczipt.chatService.controllers.TestController.create()
-GET     /addChannel                 com.arczipt.chatService.controllers.TestController.addChannel()
++nocsrf
+POST    /auth                       com.arczipt.chatService.controllers.AuthController.auth()
+
+POST    /users                      com.arczipt.chatService.controllers.UserController.addUser()
+GET     /users                      com.arczipt.chatService.controllers.UserController.getUsers()
+GET     /users/servers              com.arczipt.chatService.controllers.UserController.getServers()
+
+GET     /servers                    com.arczipt.chatService.controllers.ServerController.getServers()
+GET     /servers/:serverId/members  com.arczipt.chatService.controllers.ServerController.getMembers(serverId: Long)
+
+GET     /channels/:id/messages      com.arczipt.chatService.controllers.ChannelController.getMessages(id: Long, timestamp: Long, number: Integer)

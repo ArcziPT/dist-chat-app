@@ -1,6 +1,7 @@
 package com.arczipt.chatService.models
 import slick.jdbc.MySQLProfile.api._
 import com.arczipt.chatService.models.User._
+import play.api.libs.json.Json
 
 object Server{
     case class Server(id: Option[Long],
@@ -12,6 +13,7 @@ object Server{
         def * = (id.?, name) <> (Server.tupled, Server.unapply)
     }
     val servers = TableQuery[ServersTable]
+    implicit val serverWrite = Json.writes[Server]
 
 
     case class Channel(id: Option[Long],
@@ -28,6 +30,7 @@ object Server{
         def * = (id.?, serverId, name) <> (Channel.tupled, Channel.unapply)
     }
     val channels = TableQuery[ChannelsTable]
+    implicit val channelWrite = Json.writes[Channel]
 
     
     case class Message(userId: Long,
@@ -46,4 +49,5 @@ object Server{
         def * = (userId, timestamp, channelId, text) <> (Message.tupled, Message.unapply)
     }
     val messages = TableQuery[MessagesTable]
+    implicit val messageWrite = Json.writes[Message]
 }

@@ -58,6 +58,11 @@ class ServerDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
         db.run(q)
     }
 
+    def getChannel(channelId: Long): Future[Option[Channel]] = {
+        val q = channels filter(_.id === channelId)
+        db.run(q.result.headOption)
+    }
+
     def getMessages(channelId: Long, timestamp: Long, number: Integer): Future[Seq[Message]] = {
         val q = messages.
             filter(_.channelId === channelId).

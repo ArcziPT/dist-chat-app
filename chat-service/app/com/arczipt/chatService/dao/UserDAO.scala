@@ -8,14 +8,15 @@ import scala.concurrent.Future
 import slick.jdbc.MySQLProfile
 import com.arczipt.chatService.models.User._
 import com.arczipt.chatService.models.ServerMember._
+import com.arczipt.chatService.models.Server._
 
 class UserDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends HasDatabaseConfigProvider[MySQLProfile] {
     import slick.jdbc.MySQLProfile.api._
 
     def all(): Future[Seq[User]] = db.run(users.result)
 
-    def insert(user: User): Future[Long] = 
-        db.run(users returning users.map(_.id) += user)
+    def insert(user: User): Future[User] = 
+        db.run(users returning users += user)
 
     def getByUsername(username: String) = {
         val q = for{ 
@@ -29,8 +30,12 @@ class UserDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
         db.run(q.result.headOption)
     }
 
-    def getServers(userId: Long): Future[Seq[ServerMember]] = {
-        val q = serverMembers filter(_.userId === userId)
+    def getServers(userId: Long): Future[Seq[(String, Long, String)]] = {
+        val q = serverMembers filter(_.userId === userId) join servers on(_.serverId === _.id) map{
+            case (member, server) => {
+                (member.role, server.id, server.name)
+            }
+        }
         db.run(q.result)
     }
 
