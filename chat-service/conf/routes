@@ -4,13 +4,14 @@
 # ~~~~
 
 GET     /connect                    com.arczipt.chatService.controllers.ChatConnectionController.socket()
+GET     /assets/*file               controllers.Assets.at(file)
 
 +nocsrf
 POST    /auth                       com.arczipt.chatService.controllers.AuthController.auth()
 
 POST    /users                      com.arczipt.chatService.controllers.UserController.addUser()
 GET     /users                      com.arczipt.chatService.controllers.UserController.getUsers()
-GET     /users/servers              com.arczipt.chatService.controllers.UserController.getServers()
+GET     /users/channels             com.arczipt.chatService.controllers.UserController.getChannels()
 
 GET     /servers                    com.arczipt.chatService.controllers.ServerController.getServers()
 GET     /servers/:serverId/members  com.arczipt.chatService.controllers.ServerController.getMembers(serverId: Long)

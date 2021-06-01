@@ -1,0 +1,19 @@
+.serverPanel {
+    float: left;
+    width: 20%;
+}
+
+.channelsPanel {
+    float: left;
+    width: 20%;
+}
+
+.chat {
+    float: left;
+    width: 40%;
+}
+
+.activeUsers {
+    float: right;
+    width: 20%;
+}

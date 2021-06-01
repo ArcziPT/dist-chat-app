@@ -24,6 +24,7 @@ import pdi.jwt.JwtJson
 import com.arczipt.chatService.system.JWT
 import com.arczipt.chatService.auth.Auth
 import com.arczipt.chatService.models.ServerMember._
+import com.arczipt.chatService.dto.MessageDTO
 
 class ChannelController @Inject() (serverDAO: ServerDAO, jwt: JWT, cc: ControllerComponents)
         (implicit ec: ExecutionContext)
@@ -41,7 +42,9 @@ class ChannelController @Inject() (serverDAO: ServerDAO, jwt: JWT, cc: Controlle
             }
             ret <- {
                 if(members.isDefined && members.get.map(_.userId).contains(id.get)){
-                    serverDAO.getMessages(channelId, timestamp, number).map(messages => Ok(Json.toJson(messages)))
+                    serverDAO.getMessages(channelId, timestamp, number).map{messages => Ok(Json.toJson(messages.map{
+                        case (username, message) => MessageDTO(username, message.userId, message.channelId, message.timestamp, message.text)
+                    }))}
                 }
                 else
                     Future{Status(403)("error")}

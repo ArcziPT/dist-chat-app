@@ -1,6 +1,6 @@
 services:
   chatMainNode:
-    image: arczipt/chat-service
+    image: arczipt/chat-service:latest
     ports:
       - '8000:9000'
     environment:
@@ -13,7 +13,7 @@ services:
       - dbNode 
   
   chatNode1:
-    image: arczipt/chat-service
+    image: arczipt/chat-service:latest
     ports:
       - '8001:9000'
     environment:

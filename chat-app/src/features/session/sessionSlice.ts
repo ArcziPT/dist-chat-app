@@ -1,14 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { login, LoginRequest } from './sessionAPI';
+import { getChannels, login, LoginRequest } from './sessionAPI';
 
 export interface Channel {
+  role: string,
   name: string,
-  id: number
+  channelId: number,
+  serverId: number
 }
 
 export interface Server {
   name: string,
-  id: number,
+  serverId: number,
   channels: Channel[]
 }
 
@@ -41,12 +43,17 @@ const initialState: SessionState = {
 
 export const loginAsync = createAsyncThunk(
   'session/login',
-  async (loginRequest: LoginRequest): Promise<string | null> => {
+  async (loginRequest: LoginRequest): Promise<{username: string, userId: number, token: string} | null> => {
     const response = await login(loginRequest);
-    if(response.data === "ok")
-      return response.headers["authorization"];
-    else
-      return null;
+    return {...response.data, token: response.headers["authorization"]}
+  }
+);
+
+export const getChannelsAsync = createAsyncThunk(
+  'session/getChannels',
+  async (): Promise<Server[]> => {
+    const response = await getChannels();
+    return response.data;
   }
 );
 
@@ -54,8 +61,12 @@ export const sessionSlice = createSlice({
   name: 'session',
   initialState,
   reducers: {
-    logout: (state) => {
-      state = initialState
+    logoutAction: (state) => {
+      state.user = initialState.user
+      state.token = initialState.token
+      state.status = initialState.status
+      state.servers = initialState.servers
+      state.connection = initialState.connection
     }
   },
   extraReducers: (builder) => {
@@ -66,12 +77,19 @@ export const sessionSlice = createSlice({
       .addCase(loginAsync.fulfilled, (state, action) => {
         if(action.payload != null){
           state.status = 'active';
-          state.token = action.payload;
+          state.user = {
+            username: action.payload.username,
+            id: action.payload.userId
+          }
+          state.token = action.payload.token;
         }
+      })
+      .addCase(getChannelsAsync.fulfilled, (state, action) => {
+        state.servers = action.payload
       });
   },
 });
 
-export const { } = sessionSlice.actions;
+export const { logoutAction } = sessionSlice.actions;
 
 export default sessionSlice.reducer;

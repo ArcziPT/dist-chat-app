@@ -22,6 +22,8 @@ import pdi.jwt.JwtJson
 import com.arczipt.chatService.system.JWT
 import com.arczipt.chatService.models.User._
 import com.arczipt.chatService.auth.Auth
+import com.arczipt.chatService.dto.com.arczipt.chatService.dto.UserServer
+import com.arczipt.chatService.dto.com.arczipt.chatService.dto.ServerChannel
 
 class UserController @Inject() (userDAO: UserDAO, jwt: JWT, cc: ControllerComponents)
         (implicit ec: ExecutionContext)
@@ -39,12 +41,20 @@ class UserController @Inject() (userDAO: UserDAO, jwt: JWT, cc: ControllerCompon
         userDAO.insert(User(None, username, password)).map(user => Ok(Json.toJson(new UserDTO(user.id.get, user.username))))
     }
 
-    def getServers = Action.async {request =>
+    def getChannels = Action.async {request =>
         val id = Auth.getSenderId(jwt, request)
         if(id.isEmpty) Future{Status(403)("error")}
 
-        userDAO.getServers(id.get).map{ servers =>
-            Ok(Json.toJson(servers))
+        userDAO.getChannels(id.get).map{ channels =>
+            Ok(Json.toJson(
+                channels.groupBy{
+                    case (role, serverId, serverName, channelId, channelName) => (serverId, serverName)
+                }.mapValues{channels => channels.map{
+                    case (role, serverId, serverName, channelId, channelName) => ServerChannel(role, serverId, channelId, channelName)
+                }}.collect{
+                    case ((serverId, serverName), channels) => UserServer(serverId, serverName, channels)
+                }
+            ))
         }
     }
 }

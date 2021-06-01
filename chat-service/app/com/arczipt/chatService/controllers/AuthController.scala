@@ -36,7 +36,7 @@ class AuthController @Inject() (userDAO: UserDAO, jwt: JWT, cc: ControllerCompon
             if(user.isDefined && user.get.password == password) {
                 val claim = Json.obj("username" -> username, "userId" -> user.get.id)
                 val token = jwt.encode(claim)
-                Ok("ok").withHeaders("Authorization" -> s"bearer ${token}")
+                Ok(claim).withHeaders("Authorization" -> s"bearer ${token}")
             }
             else Status(403)("Wrong username or password")
         }

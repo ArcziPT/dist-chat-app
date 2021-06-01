@@ -8,6 +8,7 @@ import scala.concurrent.Future
 import slick.jdbc.MySQLProfile
 import com.arczipt.chatService.models.Server._
 import com.arczipt.chatService.models.ServerMember._
+import com.arczipt.chatService.models.User._
 import scala.util.Success
 import scala.util.Failure
 
@@ -63,12 +64,14 @@ class ServerDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
         db.run(q.result.headOption)
     }
 
-    def getMessages(channelId: Long, timestamp: Long, number: Integer): Future[Seq[Message]] = {
+    def getMessages(channelId: Long, timestamp: Long, number: Integer): Future[Seq[(String, Message)]] = {
         val q = messages.
             filter(_.channelId === channelId).
             filter(m => m.timestamp <= timestamp).
             sortBy(_.timestamp.desc).
-            take(number)
+            take(number) join users on((message: MessagesTable, user: UsersTable) => message.userId === user.id) map{
+                case (message, user) => (user.username, message)
+            }
 
         db.run(q.result)
     }

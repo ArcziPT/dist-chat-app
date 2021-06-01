@@ -33,6 +33,7 @@ object ClientConnectionActor {
                            channelId: Long)
     //message published to topic and send to user
     case class ReceiveMessage(username: String,
+                              userId: Long,
                               channelId: Long,
                               timestamp: Long, 
                               text: String)
@@ -40,20 +41,16 @@ object ClientConnectionActor {
     case class UserData(user: User)
     case class ChannelsData(channels: Seq[Server.Channel])
 
+    case class ChangeServer(serverId: Long)
+
     //JSON
     implicit val sendMessageReads = Json.reads[SendMessage]
     implicit val authMsgReads = Json.reads[AuthMsg]
 
     implicit val receiveMessageWrites = Json.writes[ReceiveMessage]
     implicit val statusWrites = Json.writes[Status]
-    // implicit val receiveMessageWrites = new Writes[ReceiveMessage] {
-    //     def writes(message: ReceiveMessage) = Json.obj(
-    //         "timestamp" -> message.timestamp,
-    //         "text" -> message.text,
-    //         "username" -> message.username,
-    //         "channelId" -> message.channelId
-    //     )
-    // }
+    
+    implicit val changeRead = Json.reads[ChangeServer]
 }
 
 class ClientConnectionActor 
@@ -100,12 +97,28 @@ class ClientConnectionActor
 
     def normal: Receive = {
         case msg: JsValue => {
-            val sendMessage = msg.as[SendMessage]
-            mediator ! Publish(
-                topic, 
-                ReceiveMessage(user.username, sendMessage.channelId, sendMessage.timestamp, sendMessage.text)
-            )
-            msgActor ! MessagePersistanceActor.Persist(user.id.get, sendMessage.timestamp, sendMessage.channelId, sendMessage.text)
+            val _type = (msg \ "type").as[String]
+            val _json = (msg \ "msg").as[JsValue]
+
+            _type match {
+                case "send" => {
+                    val sendMessage = _json.as[SendMessage]
+                    mediator ! Publish(
+                        topic, 
+                        ReceiveMessage(user.username, user.id.get, sendMessage.channelId, sendMessage.timestamp, sendMessage.text)
+                    )
+                    msgActor ! MessagePersistanceActor.Persist(user.id.get, sendMessage.timestamp, sendMessage.channelId, sendMessage.text)
+                }
+
+                case "change" => {
+                    val changeServer = _json.as[ChangeServer]
+                    mediator ! Unsubscribe(topic, self)
+                    serverId = 0
+                    channels = Seq.empty[Server.Channel]
+                    getServer(changeServer.serverId)
+                    context.become(setup)
+                }
+            }
         }
         case msg: ReceiveMessage => client ! Json.toJson(msg)
     }

@@ -30,12 +30,20 @@ class UserDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
         db.run(q.result.headOption)
     }
 
-    def getServers(userId: Long): Future[Seq[(String, Long, String)]] = {
-        val q = serverMembers filter(_.userId === userId) join servers on(_.serverId === _.id) map{
-            case (member, server) => {
-                (member.role, server.id, server.name)
+    def getChannels(userId: Long): Future[Seq[(String, Long, String, Long, String)]] = {
+        val q = serverMembers filter(_.userId === userId) join 
+            servers on(_.serverId === _.id) join
+            channels on{
+                case ((serverMember, server), channel) => {
+                    server.id === channel.serverId
+                }
+            } map {
+                case ((serverMember, server), channel) => {
+                    (serverMember.role, server.id, server.name, channel.id, channel.name)
+                }
+            } sortBy{
+                case (role, serverId, serverName, channelId, channelName) => serverId
             }
-        }
         db.run(q.result)
     }
 
